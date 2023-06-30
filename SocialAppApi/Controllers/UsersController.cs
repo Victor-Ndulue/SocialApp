@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialAppApi.Data;
@@ -6,9 +7,8 @@ using SocialAppApi.Entities;
 
 namespace SocialAppApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
+    [Authorize]
+    public class UsersController : BaseController
     {
         private readonly DataContext _dataContext;
         public UsersController(DataContext dataContext)
@@ -16,6 +16,7 @@ namespace SocialAppApi.Controllers
             _dataContext = dataContext;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task <ActionResult <IEnumerable<AppUser>>> GetUsers()
         {
@@ -25,7 +26,7 @@ namespace SocialAppApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
-            return await _dataContext.Users.FindAsync(id);
+            return Ok( await _dataContext.Users.FindAsync(id));
         }
     }
 }
